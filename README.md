@@ -8,6 +8,12 @@
 >
 > Manim Caption Generator powered by manim
 
+## 项目说明
+
+manim有三个较为大的分支，本项目采用manimgl，由于最新版本的`manimgl 1.6.1`存在些许bug。
+
+所以项目文件中的manimlib用的3b1b大佬还未release的版本，所以才会放在当前项目文件中。
+
 ## 项目整体框架
 
 还在整理...
