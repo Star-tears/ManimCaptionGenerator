@@ -1,0 +1,80 @@
+{
+    "type": "text",
+    "style": {
+        "font": "HarmonyOS Sans SC",
+        "color": "WHITE"
+    },
+    "caption_list": [
+        {
+            "start-time": "00:00:12,200",
+            "end-time": "00:00:13,266",
+            "caption-group": [
+                "Hello,大家好"
+            ]
+        },
+        {
+            "start-time": "00:00:13,300",
+            "end-time": "00:00:15,300",
+            "caption-group": [
+                "欢迎来到Manim Caption Generator"
+            ]
+        },
+        {
+            "start-time": "00:00:15,500",
+            "end-time": "00:00:17,466",
+            "caption-group": [
+                "这是一个测试文件"
+            ]
+        },
+        {
+            "start-time": "00:00:17,466",
+            "end-time": "00:00:20,499",
+            "caption-group": [
+                "测试srt2json模块是否正常"
+            ]
+        },
+        {
+            "start-time": "00:00:20,800",
+            "end-time": "00:00:23,566",
+            "caption-group": [
+                "颜色测试：红色，蓝色，绿色"
+            ]
+        },
+        {
+            "start-time": "00:00:23,566",
+            "end-time": "00:00:24,933",
+            "caption-group": [
+                "中英双语字幕",
+                "Chinese and English"
+            ]
+        },
+        {
+            "start-time": "00:00:24,933",
+            "end-time": "00:00:27,333",
+            "caption-group": [
+                "Latex语法测试"
+            ]
+        },
+        {
+            "start-time": "00:00:27,466",
+            "end-time": "00:00:30,599",
+            "caption-group": [
+                "$ 0 \\neq 1 \\quad x \\equiv x \\quad 1 = 9 \\bmod 2 $"
+            ]
+        },
+        {
+            "start-time": "00:00:30,800",
+            "end-time": "00:00:32,066",
+            "caption-group": [
+                "测试到此结束"
+            ]
+        },
+        {
+            "start-time": "00:00:32,066",
+            "end-time": "00:00:35,599",
+            "caption-group": [
+                "to be continue..."
+            ]
+        }
+    ]
+}

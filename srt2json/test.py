@@ -1,3 +1,3 @@
-from read_srt import *
+from srt_to_json import *
 
-read_srt_file()
+srt_to_json()
