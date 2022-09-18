@@ -4,7 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-manimgl = "1.6.1"
+manim = "*"
+ffmpeg = "*"
 
 [dev-packages]
 
