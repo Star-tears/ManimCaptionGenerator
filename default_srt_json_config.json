@@ -1,0 +1,19 @@
+{
+  "content_type": "text",
+  "style": {
+    "font": "Microsoft YaHei",
+    "font_size": 25,
+    "color": "WHITE",
+    "t2c": {
+      "Manim": "BLUE"
+    }
+  },
+  "latex_style": {
+    "font_size": 25
+  },
+  "animation": {},
+  "caption_list": [],
+  "start_time": "",
+  "end_time": "",
+  "caption_group": []
+}
