@@ -2,11 +2,7 @@
     "content_type": "text",
     "style": {
         "font": "Microsoft YaHei",
-        "font_size": 25,
-        "color": "WHITE",
-        "t2c": {
-            "Manim": "BLUE"
-        }
+        "font_size": 25
     },
     "latex_style": {
         "font_size": 25
@@ -15,6 +11,11 @@
         {
             "start_time": "00:00:00,000",
             "end_time": "00:00:02,333",
+            "style": {
+                "t2g": {
+                    "Hello": ["#58C4DD","#FC6255", "#83C167"]
+                }
+            },
             "caption_group": [
                 "Hello,你好"
             ]
@@ -22,6 +23,15 @@
         {
             "start_time": "00:00:03,100",
             "end_time": "00:00:08,600",
+            "style": {
+                "t2f": {
+                    "Manim Caption Generator": "FiraCode Nerd Font"
+                },
+                "t2c": {
+                    "Manim Caption Generator": "#3577d8"
+                }
+
+            },
             "caption_group": [
                 "欢迎来到Manim Caption Generator"
             ]
@@ -29,6 +39,9 @@
         {
             "start_time": "00:00:09,700",
             "end_time": "00:00:14,933",
+            "style": {
+                "slant": "ITALIC"
+            },
             "caption_group": [
                 "恭喜你成为观看该视频的第一批观众"
             ]
@@ -43,6 +56,13 @@
         {
             "start_time": "00:00:22,733",
             "end_time": "00:00:27,299",
+            "style": {
+                "t2c": {
+                    "红色": "RED",
+                    "蓝色": "BLUE",
+                    "绿色": "GREEN"
+                }
+            },
             "caption_group": [
                 "颜色测试：红色，蓝色，绿色"
             ]
@@ -56,6 +76,7 @@
             ]
         },
         {
+            "content_type": "latex",
             "start_time": "00:00:32,400",
             "end_time": "00:00:34,800",
             "caption_group": [
@@ -63,10 +84,11 @@
             ]
         },
         {
+            "content_type": "latex",
             "start_time": "00:00:34,800",
             "end_time": "00:00:37,933",
             "caption_group": [
-                "$ 0\\neq 1 \\quad x \\equiv x \\quad 1 = 9 \\bmod 2 $"
+                "$ 0\\neq 1 \\quad x \\equiv x \\quad 1 = 9 \\bmod 2   \\sum_{i=0}^n i^2$"
             ]
         },
         {
@@ -79,6 +101,11 @@
         {
             "start_time": "00:00:49,600",
             "end_time": "00:00:53,133",
+            "style": {
+                "t2f": {
+                    "to be continue...": "Cascadia Code"
+                }
+            },
             "caption_group": [
                 "to be continue..."
             ]
