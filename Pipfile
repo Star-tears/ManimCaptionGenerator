@@ -4,8 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-manim = "*"
-ffmpeg = "*"
+manim = "0.16.0.post0"
 
 [dev-packages]
 
@@ -13,4 +12,5 @@ ffmpeg = "*"
 python_version = "3.10"
 
 [scripts]
-start = "manimgl main.py"
+final-build = "manim main.py -t"
+review = "manim main.py -p"

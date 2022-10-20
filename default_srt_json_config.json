@@ -1,0 +1,20 @@
+{
+  "content_type": "text",
+  "style": {
+    "font": "Microsoft YaHei",
+    "font_size": 25,
+    "color": "WHITE",
+    "weight": "BOLD",
+    "t2c": {},
+    "t2f": {},
+    "t2g": {}
+  },
+  "latex_style": {
+    "font_size": 25
+  },
+  "animation": {},
+  "caption_list": [],
+  "start_time": "",
+  "end_time": "",
+  "caption_group": []
+}
