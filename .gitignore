@@ -2,3 +2,6 @@
 /cache/
 /.idea/
 **/__pycache__
+/exports/
+/tmp/
+/default-files/
