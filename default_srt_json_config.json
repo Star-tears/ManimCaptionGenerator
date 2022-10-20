@@ -1,12 +1,13 @@
 {
   "content_type": "text",
   "style": {
-    "font": "FiraCode Nerd Font",
+    "font": "Microsoft YaHei",
     "font_size": 25,
     "color": "WHITE",
-    "t2c": {
-      "Manim": "BLUE"
-    }
+    "weight": "BOLD",
+    "t2c": {},
+    "t2f": {},
+    "t2g": {}
   },
   "latex_style": {
     "font_size": 25
