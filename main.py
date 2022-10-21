@@ -41,12 +41,12 @@ class ManimCaptionGenerator(Scene):
         self.now_time_tick = 0
         self.now_dfs_count = 0
 
-    def build_srt_json(self, srt_path="default-files/MCG默认字幕文件.srt",
-                       output_json_path="default-files/MCG默认字幕文件.json",
+    def build_srt_json(self, srt_path="default_files/MCG默认字幕文件.srt",
+                       output_json_path="default_files/MCG默认字幕文件.json",
                        srt_json_config_path="default_srt_json_config.json"):
         srt_to_json(srt_path, output_json_path, srt_json_config_path)
 
-    def preload_srt_json(self, json_path="default-files/MCG默认字幕文件.json"):
+    def preload_srt_json(self, json_path="default_files/MCG默认字幕文件.json"):
         srt_json_config = self.read_srt_json_config(json_path)
         # print(1)
         # print(srt_json_config)
@@ -69,7 +69,7 @@ class ManimCaptionGenerator(Scene):
                 for sub_caption in d1["caption_list"]:
                     self.gradient_list2tuple(sub_caption)
 
-    def read_srt_json_config(self, srt_json_config_path="default-files/MCG默认字幕文件.json") -> dict:
+    def read_srt_json_config(self, srt_json_config_path="default_files/MCG默认字幕文件.json") -> dict:
         with open(srt_json_config_path, "r", encoding="utf-8") as config_file:
             srt_json_config = json.load(config_file)
             return srt_json_config
