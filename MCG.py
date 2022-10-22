@@ -85,12 +85,19 @@ class ManimCaptionGenerator(Scene):
             self.build_caption(now_config["caption_group"], now_all_attr_config)
         else:
             for sub_config in now_config["caption_list"]:
-                copy_now_all_attr_config = {}
+                copy_now_all_attr_config: dict = {}
                 self.add_attr_config_dict(now_all_attr_config, copy_now_all_attr_config)
                 self.add_attr_config_dict(sub_config, copy_now_all_attr_config)
                 self.build_video(sub_config, copy_now_all_attr_config)
 
     def add_attr_config_dict(self, d1: dict, d2: dict):
+        """
+        将d1字典的属性递归加到d2字典，已有属性进行覆盖
+
+        :param d1: 加字典
+        :param d2: 被加字典
+        :return: void
+        """
         for key_d1 in d1.keys():
             if key_d1 != "caption_group" and key_d1 != "caption_list":
                 if type(d1[key_d1]) == type({}):
@@ -122,15 +129,24 @@ class ManimCaptionGenerator(Scene):
         self.now_time_tick = start_time_tick
 
         tot_time_tick: int = end_time_tick - start_time_tick
-        create_animation_run_time: int = min(2000, int(tot_time_tick * 0.2))
-        uncreate_animation_run_time: int = min(2000, int(tot_time_tick * 0.1))
-        mid_run_time: int = tot_time_tick - create_animation_run_time - uncreate_animation_run_time
+        create_animation_run_time_tick: int = min(2000, int(tot_time_tick * 0.2))
+        uncreate_animation_run_time_tick: int = min(2000, int(tot_time_tick * 0.1))
+        mid_run_time_tick: int = tot_time_tick - create_animation_run_time_tick - uncreate_animation_run_time_tick
 
         caption_vgroup = self.build_caption_vgroup(caption_group_list, attr_config)
 
-        self.create_caption(caption_vgroup, attr_config, create_animation_run_time / 1000)
-        self.wait_safely(mid_run_time / 1000)
-        self.uncreate_caption(caption_vgroup, attr_config, uncreate_animation_run_time / 1000)
+        self.create_caption(caption_vgroup, attr_config, create_animation_run_time_tick / 1000)
+        if "animation" in attr_config.keys():
+            ani_dict: dict = attr_config["animation"]
+            if "transform_target" in ani_dict.keys():
+                self.add_attr_config_dict(ani_dict["transform_target"], attr_config)
+                caption_vgroup2 = self.build_caption_vgroup(caption_group_list, attr_config)
+                self.transform_caption(caption_vgroup, caption_vgroup2, mid_run_time_tick)
+            else:
+                self.wait_safely(mid_run_time_tick / 1000)
+        else:
+            self.wait_safely(mid_run_time_tick / 1000)
+        self.uncreate_caption(caption_vgroup, attr_config, uncreate_animation_run_time_tick / 1000)
 
         self.now_time_tick = end_time_tick
 
@@ -138,9 +154,9 @@ class ManimCaptionGenerator(Scene):
         if wait_run_time > 0:
             self.wait(wait_run_time)
 
-    def create_caption(self, caption_vgroup, attr_config:dict, create_animation_run_time):
+    def create_caption(self, caption_vgroup, attr_config: dict, create_animation_run_time):
         if "animation" in attr_config.keys():
-            ani_dict:dict = attr_config["animation"]
+            ani_dict: dict = attr_config["animation"]
             if "create" in ani_dict.keys():
                 match ani_dict["create"]:
                     case "Create":
@@ -154,9 +170,17 @@ class ManimCaptionGenerator(Scene):
         else:
             self.play(Write(caption_vgroup), run_time=create_animation_run_time)
 
+    def transform_caption(self, caption_vgroup, caption_vgroup2, tot_run_time_tick: int):
+        pre_wait_run_time_tick: int = min(2000, int(tot_run_time_tick * 0.2))
+        transform_run_time_tick: int = min(2000, int(tot_run_time_tick * 0.2))
+        wait_run_time_tick: int = tot_run_time_tick - pre_wait_run_time_tick - transform_run_time_tick
+        self.wait_safely(pre_wait_run_time_tick / 1000)
+        self.play(Transform(caption_vgroup, caption_vgroup2), run_time=transform_run_time_tick / 1000)
+        self.wait_safely(wait_run_time_tick / 1000)
+
     def uncreate_caption(self, caption_vgroup, attr_config, uncreate_animation_run_time):
         if "animation" in attr_config.keys():
-            ani_dict:dict = attr_config["animation"]
+            ani_dict: dict = attr_config["animation"]
             if "uncreate" in ani_dict.keys():
                 match ani_dict["uncreate"]:
                     case "Uncreate":
