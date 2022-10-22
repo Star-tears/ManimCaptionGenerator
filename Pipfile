@@ -12,7 +12,7 @@ manim = "0.16.0.post0"
 python_version = "3.10"
 
 [scripts]
-final-build = "manim MCG.py -t -c cfg_files/main.cfg"
-review = "manim MCG.py -p -c cfg_files/main.cfg"
+final-build = "manim MCG.py -t -c cfg_files/manim.cfg"
+review = "manim MCG.py -p -c cfg_files/manim.cfg"
 debug-final-build = "manim MCG.py -t -c cfg_files/debug.cfg"
 debug-review = "manim MCG.py -p -c cfg_files/debug.cfg"

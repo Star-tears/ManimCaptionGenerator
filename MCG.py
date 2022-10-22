@@ -118,16 +118,60 @@ class ManimCaptionGenerator(Scene):
         # print(json.dumps(attr_config, indent=4, ensure_ascii=False))
 
         pre_wait_time_tick = start_time_tick - self.now_time_tick
-        if (pre_wait_time_tick > 0):
-            self.wait(pre_wait_time_tick / 1000)
+        self.wait_safely(pre_wait_time_tick / 1000)
         self.now_time_tick = start_time_tick
 
         tot_time_tick: int = end_time_tick - start_time_tick
         create_animation_run_time: int = min(2000, int(tot_time_tick * 0.2))
         uncreate_animation_run_time: int = min(2000, int(tot_time_tick * 0.1))
-        wait_run_time: int = tot_time_tick - create_animation_run_time - uncreate_animation_run_time
+        mid_run_time: int = tot_time_tick - create_animation_run_time - uncreate_animation_run_time
 
-        caption_vgroup = VGroup()
+        caption_vgroup = self.build_caption_vgroup(caption_group_list, attr_config)
+
+        self.create_caption(caption_vgroup, attr_config, create_animation_run_time / 1000)
+        self.wait_safely(mid_run_time / 1000)
+        self.uncreate_caption(caption_vgroup, attr_config, uncreate_animation_run_time / 1000)
+
+        self.now_time_tick = end_time_tick
+
+    def wait_safely(self, wait_run_time: float):
+        if wait_run_time > 0:
+            self.wait(wait_run_time)
+
+    def create_caption(self, caption_vgroup, attr_config:dict, create_animation_run_time):
+        if "animation" in attr_config.keys():
+            ani_dict:dict = attr_config["animation"]
+            if "create" in ani_dict.keys():
+                match ani_dict["create"]:
+                    case "Create":
+                        self.play(Create(caption_vgroup), run_time=create_animation_run_time)
+                    case "FadeIn":
+                        self.play(FadeIn(caption_vgroup), run_time=create_animation_run_time)
+                    case _:
+                        self.play(Write(caption_vgroup), run_time=create_animation_run_time)
+            else:
+                self.play(Write(caption_vgroup), run_time=create_animation_run_time)
+        else:
+            self.play(Write(caption_vgroup), run_time=create_animation_run_time)
+
+    def uncreate_caption(self, caption_vgroup, attr_config, uncreate_animation_run_time):
+        if "animation" in attr_config.keys():
+            ani_dict:dict = attr_config["animation"]
+            if "uncreate" in ani_dict.keys():
+                match ani_dict["uncreate"]:
+                    case "Uncreate":
+                        self.play(Uncreate(caption_vgroup), run_time=uncreate_animation_run_time)
+                    case "Unwrite":
+                        self.play(Unwrite(caption_vgroup), run_time=uncreate_animation_run_time)
+                    case _:
+                        self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
+            else:
+                self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
+        else:
+            self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
+
+    def build_caption_vgroup(self, caption_group_list: list, attr_config: dict) -> VGroup:
+        caption_vgroup: VGroup = VGroup()
         for content_caption_element in caption_group_list:
             caption_element = None
             if attr_config["content_type"] == "text":
@@ -138,26 +182,21 @@ class ManimCaptionGenerator(Scene):
                 caption_element = Tex(content_caption_element, tex_template=TexTemplateLibrary.ctex,
                                       **attr_config["latex_style"])
             caption_vgroup.add(caption_element)
-        if "animation" in attr_config.keys():
-            ani_dict:dict =attr_config["animation"]
-            if "to_edge" in ani_dict.keys():
-                match ani_dict["to_edge"]:
+        if "position" in attr_config.keys():
+            pos_dict: dict = attr_config["position"]
+            if "to_edge" in pos_dict.keys():
+                match pos_dict["to_edge"]:
                     case "ORIGIN":
                         caption_vgroup.arrange(DOWN).to_edge(ORIGIN, buff=LARGE_BUFF)
+                    case "UP":
+                        caption_vgroup.arrange(DOWN).to_edge(UP, buff=LARGE_BUFF)
                     case "LEFT":
                         caption_vgroup.arrange(DOWN).to_edge(LEFT, buff=LARGE_BUFF)
                     case _:
                         caption_vgroup.arrange(DOWN).to_edge(DOWN, buff=LARGE_BUFF)
+            else:
+                caption_vgroup.arrange(DOWN).to_edge(DOWN, buff=LARGE_BUFF)
         else:
             caption_vgroup.arrange(DOWN).to_edge(DOWN, buff=LARGE_BUFF)
-        self.create_caption(caption_vgroup, attr_config, create_animation_run_time / 1000)
-        self.wait(wait_run_time / 1000)
-        self.uncreate_caption(caption_vgroup, attr_config, uncreate_animation_run_time / 1000)
 
-        self.now_time_tick = end_time_tick
-
-    def create_caption(self, caption_vgroup, attr_config, create_animation_run_time):
-        self.play(Write(caption_vgroup), run_time=create_animation_run_time)
-
-    def uncreate_caption(self, caption_vgroup, attr_config, uncreate_animation_run_time):
-        self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
+        return caption_vgroup
