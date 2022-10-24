@@ -213,6 +213,8 @@ class ManimCaptionGenerator(Scene):
             pos_dict: dict = attr_config["position"]
             if "to_edge" in pos_dict.keys():
                 match pos_dict["to_edge"]:
+                    case "CENTER":
+                        caption_vgroup.arrange(DOWN).to_edge(ORIGIN, buff=LARGE_BUFF)
                     case "ORIGIN":
                         caption_vgroup.arrange(DOWN).to_edge(ORIGIN, buff=LARGE_BUFF)
                     case "UP":
