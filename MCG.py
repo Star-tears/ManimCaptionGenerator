@@ -81,8 +81,8 @@ class ManimCaptionGenerator(Scene):
         self.add_attr_config_dict(now_config, now_all_attr_config)
         # print(json.dumps(now_all_attr_config, indent=4, ensure_ascii=False))
         # print(json.dumps(now_config, indent=4, ensure_ascii=False))
-        if "caption_group" in now_config.keys():
-            self.build_caption(now_config["caption_group"], now_all_attr_config)
+        if "caption_group" in now_all_attr_config.keys():
+            self.build_caption(now_all_attr_config)
         else:
             for sub_config in now_config["caption_list"]:
                 copy_now_all_attr_config: dict = {}
@@ -99,13 +99,15 @@ class ManimCaptionGenerator(Scene):
         :return: void
         """
         for key_d1 in d1.keys():
-            if key_d1 != "caption_group" and key_d1 != "caption_list":
+            if key_d1 != "caption_list":
                 if type(d1[key_d1]) == type({}):
                     if key_d1 not in d2.keys():
                         d2[key_d1] = {}
                     self.add_attr_config_dict(d1[key_d1], d2[key_d1])
                 else:
                     d2[key_d1] = d1[key_d1]
+            elif key_d1 == "caption_group":
+                d2[key_d1] = d1[key_d1]
 
     def time_to_int(self, s1: str) -> int:
         tmp_time_tick: int = 0
@@ -116,7 +118,8 @@ class ManimCaptionGenerator(Scene):
         tmp_time_tick += int(l1[0]) * 1000 * 60 * 60
         return tmp_time_tick
 
-    def build_caption(self, caption_group_list: list, attr_config: dict):
+    def build_caption(self, attr_config: dict):
+        caption_group_list: list = attr_config["caption_group"]
         start_time_tick = self.time_to_int(attr_config["start_time"])
         end_time_tick = self.time_to_int(attr_config["end_time"])
         print("start_time: ", attr_config["start_time"], start_time_tick)
@@ -133,14 +136,14 @@ class ManimCaptionGenerator(Scene):
         uncreate_animation_run_time_tick: int = min(2000, int(tot_time_tick * 0.1))
         mid_run_time_tick: int = tot_time_tick - create_animation_run_time_tick - uncreate_animation_run_time_tick
 
-        caption_vgroup = self.build_caption_vgroup(caption_group_list, attr_config)
+        caption_vgroup = self.build_caption_vgroup(attr_config)
 
         self.create_caption(caption_vgroup, attr_config, create_animation_run_time_tick / 1000)
         if "animation" in attr_config.keys():
             ani_dict: dict = attr_config["animation"]
             if "transform_target" in ani_dict.keys():
                 self.add_attr_config_dict(ani_dict["transform_target"], attr_config)
-                caption_vgroup2 = self.build_caption_vgroup(caption_group_list, attr_config)
+                caption_vgroup2 = self.build_caption_vgroup(attr_config)
                 self.transform_caption(caption_vgroup, caption_vgroup2, mid_run_time_tick)
             else:
                 self.wait_safely(mid_run_time_tick / 1000)
@@ -194,15 +197,15 @@ class ManimCaptionGenerator(Scene):
         else:
             self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
 
-    def build_caption_vgroup(self, caption_group_list: list, attr_config: dict) -> VGroup:
+    def build_caption_vgroup(self,attr_config: dict) -> VGroup:
+        caption_group_list: list = attr_config["caption_group"]
         caption_vgroup: VGroup = VGroup()
+        print(attr_config)
         for content_caption_element in caption_group_list:
             caption_element = None
             if attr_config["content_type"] == "text":
-                print(attr_config["style"])
                 caption_element = Text(content_caption_element, **attr_config["style"])
             else:
-                print(attr_config["latex_style"])
                 caption_element = Tex(content_caption_element, tex_template=TexTemplateLibrary.ctex,
                                       **attr_config["latex_style"])
             caption_vgroup.add(caption_element)
@@ -210,6 +213,8 @@ class ManimCaptionGenerator(Scene):
             pos_dict: dict = attr_config["position"]
             if "to_edge" in pos_dict.keys():
                 match pos_dict["to_edge"]:
+                    case "CENTER":
+                        caption_vgroup.arrange(DOWN).to_edge(ORIGIN, buff=LARGE_BUFF)
                     case "ORIGIN":
                         caption_vgroup.arrange(DOWN).to_edge(ORIGIN, buff=LARGE_BUFF)
                     case "UP":
