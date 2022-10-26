@@ -195,5 +195,5 @@ class ManimCaptionGenerator(Scene):
         print("transform position:", key)
         caption_vgroup.arrange(DOWN).to_edge(mp.getObjFromKey(key, ManimObjEnum.DOWN),
                                              buff=mp.key2obj(ManimObjEnum.LARGE_BUFF))
-        
+
         return caption_vgroup
