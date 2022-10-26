@@ -19,6 +19,10 @@ class ManimObjEnum:
     DOWN = "DOWN"
     RIGHT = "RIGHT"
     LEFT = "LEFT"
+    UL = "UL"
+    UR = "UR"
+    DL = "DL"
+    DR = "DR"
 
 
 class MixMapper:
@@ -38,7 +42,11 @@ class MixMapper:
         "UP": UP,
         "DOWN": DOWN,
         "RIGHT": RIGHT,
-        "LEFT": LEFT
+        "LEFT": LEFT,
+        "UL": UL,
+        "UR": UR,
+        "DL": DL,
+        "DR": DR
     }
 
     def getObjFromKey(self, key, default_key):
