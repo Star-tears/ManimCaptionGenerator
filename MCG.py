@@ -3,7 +3,9 @@ import re
 
 from manim import *
 from srt2json.srt_to_json import srt_to_json
+from MapperUtils.manimMapper.MixMapper import *
 
+mp: MixMapper = MixMapper()
 
 class ManimCaptionGenerator(Scene):
     TEXT_CONFIG = {}
@@ -158,20 +160,10 @@ class ManimCaptionGenerator(Scene):
             self.wait(wait_run_time)
 
     def create_caption(self, caption_vgroup, attr_config: dict, create_animation_run_time):
-        if "animation" in attr_config.keys():
-            ani_dict: dict = attr_config["animation"]
-            if "create" in ani_dict.keys():
-                match ani_dict["create"]:
-                    case "Create":
-                        self.play(Create(caption_vgroup), run_time=create_animation_run_time)
-                    case "FadeIn":
-                        self.play(FadeIn(caption_vgroup), run_time=create_animation_run_time)
-                    case _:
-                        self.play(Write(caption_vgroup), run_time=create_animation_run_time)
-            else:
-                self.play(Write(caption_vgroup), run_time=create_animation_run_time)
-        else:
-            self.play(Write(caption_vgroup), run_time=create_animation_run_time)
+        key = None
+        if mp.isKeysInDict(["animation", "create"], attr_config):
+            key = attr_config["animation"]["create"]
+        self.play(mp.getObjFromKey(key, ManimObjEnum.Write)(caption_vgroup), run_time=create_animation_run_time)
 
     def transform_caption(self, caption_vgroup, caption_vgroup2, tot_run_time_tick: int):
         pre_wait_run_time_tick: int = min(2000, int(tot_run_time_tick * 0.2))
@@ -182,22 +174,12 @@ class ManimCaptionGenerator(Scene):
         self.wait_safely(wait_run_time_tick / 1000)
 
     def uncreate_caption(self, caption_vgroup, attr_config, uncreate_animation_run_time):
-        if "animation" in attr_config.keys():
-            ani_dict: dict = attr_config["animation"]
-            if "uncreate" in ani_dict.keys():
-                match ani_dict["uncreate"]:
-                    case "Uncreate":
-                        self.play(Uncreate(caption_vgroup), run_time=uncreate_animation_run_time)
-                    case "Unwrite":
-                        self.play(Unwrite(caption_vgroup), run_time=uncreate_animation_run_time)
-                    case _:
-                        self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
-            else:
-                self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
-        else:
-            self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
+        key = None
+        if mp.isKeysInDict(["animation", "uncreate"], attr_config):
+            key = attr_config["animation"]["uncreate"]
+        self.play(mp.getObjFromKey(key, ManimObjEnum.FadeOut)(caption_vgroup), run_time=uncreate_animation_run_time)
 
-    def build_caption_vgroup(self,attr_config: dict) -> VGroup:
+    def build_caption_vgroup(self, attr_config: dict) -> VGroup:
         caption_group_list: list = attr_config["caption_group"]
         caption_vgroup: VGroup = VGroup()
         print(attr_config)
