@@ -3,6 +3,9 @@ import re
 
 from manim import *
 from srt2json.srt_to_json import srt_to_json
+from MapperUtils.manimMapper.MixMapper import *
+
+mp: MixMapper = MixMapper()
 
 
 class ManimCaptionGenerator(Scene):
@@ -139,14 +142,10 @@ class ManimCaptionGenerator(Scene):
         caption_vgroup = self.build_caption_vgroup(attr_config)
 
         self.create_caption(caption_vgroup, attr_config, create_animation_run_time_tick / 1000)
-        if "animation" in attr_config.keys():
-            ani_dict: dict = attr_config["animation"]
-            if "transform_target" in ani_dict.keys():
-                self.add_attr_config_dict(ani_dict["transform_target"], attr_config)
-                caption_vgroup2 = self.build_caption_vgroup(attr_config)
-                self.transform_caption(caption_vgroup, caption_vgroup2, mid_run_time_tick)
-            else:
-                self.wait_safely(mid_run_time_tick / 1000)
+        if mp.isKeysInDict(["animation", "transform_target"], attr_config):
+            self.add_attr_config_dict(attr_config["animation"]["transform_target"], attr_config)
+            caption_vgroup2 = self.build_caption_vgroup(attr_config)
+            self.transform_caption(caption_vgroup, caption_vgroup2, mid_run_time_tick)
         else:
             self.wait_safely(mid_run_time_tick / 1000)
         self.uncreate_caption(caption_vgroup, attr_config, uncreate_animation_run_time_tick / 1000)
@@ -158,46 +157,26 @@ class ManimCaptionGenerator(Scene):
             self.wait(wait_run_time)
 
     def create_caption(self, caption_vgroup, attr_config: dict, create_animation_run_time):
-        if "animation" in attr_config.keys():
-            ani_dict: dict = attr_config["animation"]
-            if "create" in ani_dict.keys():
-                match ani_dict["create"]:
-                    case "Create":
-                        self.play(Create(caption_vgroup), run_time=create_animation_run_time)
-                    case "FadeIn":
-                        self.play(FadeIn(caption_vgroup), run_time=create_animation_run_time)
-                    case _:
-                        self.play(Write(caption_vgroup), run_time=create_animation_run_time)
-            else:
-                self.play(Write(caption_vgroup), run_time=create_animation_run_time)
-        else:
-            self.play(Write(caption_vgroup), run_time=create_animation_run_time)
+        key = None
+        if mp.isKeysInDict(["animation", "create"], attr_config):
+            key = attr_config["animation"]["create"]
+        self.play(mp.getObjFromKey(key, ManimObjEnum.Write)(caption_vgroup), run_time=create_animation_run_time)
 
     def transform_caption(self, caption_vgroup, caption_vgroup2, tot_run_time_tick: int):
         pre_wait_run_time_tick: int = min(2000, int(tot_run_time_tick * 0.2))
         transform_run_time_tick: int = min(2000, int(tot_run_time_tick * 0.2))
         wait_run_time_tick: int = tot_run_time_tick - pre_wait_run_time_tick - transform_run_time_tick
         self.wait_safely(pre_wait_run_time_tick / 1000)
-        self.play(Transform(caption_vgroup, caption_vgroup2), run_time=transform_run_time_tick / 1000)
+        self.play(Transform(caption_vgroup, caption_vgroup2), run_time=transform_run_time_tick / 1000, rate_func=smooth)
         self.wait_safely(wait_run_time_tick / 1000)
 
     def uncreate_caption(self, caption_vgroup, attr_config, uncreate_animation_run_time):
-        if "animation" in attr_config.keys():
-            ani_dict: dict = attr_config["animation"]
-            if "uncreate" in ani_dict.keys():
-                match ani_dict["uncreate"]:
-                    case "Uncreate":
-                        self.play(Uncreate(caption_vgroup), run_time=uncreate_animation_run_time)
-                    case "Unwrite":
-                        self.play(Unwrite(caption_vgroup), run_time=uncreate_animation_run_time)
-                    case _:
-                        self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
-            else:
-                self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
-        else:
-            self.play(FadeOut(caption_vgroup), run_time=uncreate_animation_run_time)
+        key = None
+        if mp.isKeysInDict(["animation", "uncreate"], attr_config):
+            key = attr_config["animation"]["uncreate"]
+        self.play(mp.getObjFromKey(key, ManimObjEnum.FadeOut)(caption_vgroup), run_time=uncreate_animation_run_time)
 
-    def build_caption_vgroup(self,attr_config: dict) -> VGroup:
+    def build_caption_vgroup(self, attr_config: dict) -> VGroup:
         caption_group_list: list = attr_config["caption_group"]
         caption_vgroup: VGroup = VGroup()
         print(attr_config)
@@ -209,23 +188,12 @@ class ManimCaptionGenerator(Scene):
                 caption_element = Tex(content_caption_element, tex_template=TexTemplateLibrary.ctex,
                                       **attr_config["latex_style"])
             caption_vgroup.add(caption_element)
-        if "position" in attr_config.keys():
-            pos_dict: dict = attr_config["position"]
-            if "to_edge" in pos_dict.keys():
-                match pos_dict["to_edge"]:
-                    case "CENTER":
-                        caption_vgroup.arrange(DOWN).to_edge(ORIGIN, buff=LARGE_BUFF)
-                    case "ORIGIN":
-                        caption_vgroup.arrange(DOWN).to_edge(ORIGIN, buff=LARGE_BUFF)
-                    case "UP":
-                        caption_vgroup.arrange(DOWN).to_edge(UP, buff=LARGE_BUFF)
-                    case "LEFT":
-                        caption_vgroup.arrange(DOWN).to_edge(LEFT, buff=LARGE_BUFF)
-                    case _:
-                        caption_vgroup.arrange(DOWN).to_edge(DOWN, buff=LARGE_BUFF)
-            else:
-                caption_vgroup.arrange(DOWN).to_edge(DOWN, buff=LARGE_BUFF)
-        else:
-            caption_vgroup.arrange(DOWN).to_edge(DOWN, buff=LARGE_BUFF)
+
+        key = None
+        if mp.isKeysInDict(["position", "to_edge"], attr_config):
+            key = attr_config["position"]["to_edge"]
+        print("transform position:", key)
+        caption_vgroup.arrange(DOWN).to_edge(mp.getObjFromKey(key, ManimObjEnum.DOWN),
+                                             buff=mp.key2obj(ManimObjEnum.LARGE_BUFF))
 
         return caption_vgroup
